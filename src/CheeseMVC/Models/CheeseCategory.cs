@@ -9,6 +9,11 @@ namespace CheeseMVC.Models
     {
         public int ID { get; set; }
         public string Name { get; set; }
+        
+
+        //Represents the list of all items in a given category.
+        public IList<Cheese> Cheeses { get; set; }
+
 
     }
 }
