@@ -58,7 +58,9 @@ namespace CheeseMVC.Controllers
                 //save the changes that you made to the database
                 context.SaveChanges();
 
-                return Redirect("Menu/ViewMenu/" + newMenu.ID);
+                Menu lastmenu = context.Menus.Last();
+
+                return Redirect("/ViewMenu/" + lastmenu.ID);
             }
             else
             {
@@ -70,7 +72,7 @@ namespace CheeseMVC.Controllers
         public IActionResult ViewMenu(int id)
         {
             // get the menu of the given id
-            Menu theMenu = context.Menus.Single(c => c.ID == id);
+            Menu theMenu = context.Menus.Find(id);
             
             //get the items associated with a particular menu
             List<CheeseMenu> items = context
@@ -88,18 +90,22 @@ namespace CheeseMVC.Controllers
             return View(viewMenuViewModel);
         }
 
-        public IActionResult AddItem(int id)
+        public IActionResult AddMenuItem(int id)
         {
-            Menu theMenu = context.Menus.Single(c => c.ID == id);
+            Menu theMenu = context.Menus.Single(m => m.ID == id);
             List<Cheese> cheeses = context.Cheeses.ToList();
 
+
             AddMenuItemViewModel addMenuItemViewModel = new AddMenuItemViewModel(cheeses, theMenu);
+
+            ViewBag.ID = id;
+
 
             return View(addMenuItemViewModel);
         }
 
         [HttpPost]
-        public IActionResult AddItem(AddMenuItemViewModel addMenuItemViewModel)
+        public IActionResult AddMenuItem(AddMenuItemViewModel addMenuItemViewModel)
         {
             if (ModelState.IsValid)
             {
@@ -124,9 +130,9 @@ namespace CheeseMVC.Controllers
                      
                 }
 
-                return Redirect(string.Format("/Menu/ViewMenu/{0}", addMenuItemViewModel));
+                return Redirect(string.Format("/Menu/ViewMenu/{0}", addMenuItemViewModel.MenuID));
             }
-            return View();
+            return View(addMenuItemViewModel);
         }
     }
 }
